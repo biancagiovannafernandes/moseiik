@@ -287,7 +287,7 @@ fn l1(im1: &RgbImage, im2: &RgbImage, simd_flag: bool, verbose: bool) -> i32 {
 }
 
 unsafe fn get_optimal_l1(simd_flag: bool, verbose: bool) -> unsafe fn(&RgbImage, &RgbImage) -> i32 {
-    static mut FN_POINTER: unsafe fn(&RgbImage, &RgbImage) -> i32 = l1_generic;
+    static mut FN_POINTER: unsafe fn(&RgbImage, &RgbImage) -> i32 = l1_generic; // if there is no SIMD parameter we will call l1_generic
 
     static INIT: std::sync::Once = std::sync::Once::new();
 
@@ -436,16 +436,34 @@ pub fn compute_mosaic(args: Options) {
 fn main() {
     let args = Options::parse();
     compute_mosaic(args);
+
 }
+
+//main 
 
 #[cfg(test)]
 mod tests {
+    use super::*; //import des functions et structures du main file
+
     #[test]
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
-    fn unit_test_x86() {
-        // TODO
-        assert!(true);
-    }
+        fn unit_test_x86() { //pour lui tester il faut ecrire <cargo test x86> sur le terminal
+            let chemin_image = "/home/eii/Documents/moseiik/assets/target-small.png";
+            let arg_test = Options {
+                image: String::from(chemin_image), // Location of the target image
+                output: String::from("/home/eii/Documents/moseiik/assets/out_x86.png"), // Saved result location
+                tiles: String::from("/home/eii/Documents/moseiik/assets/tiles-small"), // Location of the tiles
+                scaling: 1, // Scaling factor of the image
+                tile_size: 5, // Size of the tiles
+                remove_used: true, // Remove used tile
+                verbose: true,
+                simd: true, // Use SIMD when available
+                num_thread: 1, // Specify number of threads to use, leave blank for default
+            };
+            let _output_path = "/home/eii/Documents/moseiik/assets/out_x86.png";
+            compute_mosaic(arg_test);
+            assert!(std::path::Path::new(_output_path).exists()); //check if anything was created in my output_path
+            } 
 
     #[test]
     #[cfg(target_arch = "aarch64")]
@@ -455,7 +473,20 @@ mod tests {
 
     #[test]
     fn unit_test_generic() {
-        // TODO
-        assert!(true);
+            let chemin_image = "/home/eii/Documents/moseiik/assets/target-small.png";
+            let arg_test = Options {
+                image: String::from(chemin_image),
+                output: String::from("/home/eii/Documents/moseiik/assets/out_generic.png"), 
+                tiles: String::from("/home/eii/Documents/moseiik/assets/tiles-small"), 
+                scaling: 1, 
+                tile_size: 5, 
+                remove_used: true, 
+                verbose: true,
+                simd: false, // This time we disable SIMD to test generic implementation
+                num_thread: 1,
+            };
+        let _output_path = "/home/eii/Documents/moseiik/assets/out_generic.png";
+        compute_mosaic(arg_test);
+        assert!(std::path::Path::new(_output_path).exists());
     }
 }

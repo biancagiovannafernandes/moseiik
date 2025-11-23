@@ -25,7 +25,8 @@ jobs:
 
       - name: Download test images
         run: |
-          sudo apt-get update && sudo apt-get install - sudo apt-get install -y curl unzip                
+          sudo apt-get update
+          sudo apt-get install -y curl unzip                
           curl -L "https://nasext-vaader.insa-rennes.fr/ietr-vaader/moseiik_test_images.zip" -o moseiik_test_images.zip
           unzip -o moseiik_test_images.zip -d assets
           rm moseiik_test_images.zip

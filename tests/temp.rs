@@ -17,11 +17,11 @@ mod tests {
          //test avx2 or sse2 if available
 
         use moseiik::main::compute_mosaic;
-        let chemin_image = "assets/moseiik_test_images/kit.jpeg";
+        let chemin_image = "assets/kit.jpeg";
         let arg_test = Options {
             image: String::from(chemin_image), // Location of the target image
             output: String::from("assets/out_x86.png"), // Saved result location
-            tiles: String::from("assets/moseiik_test_images/images"), // Location of the tiles
+            tiles: String::from("assets/images"), // Location of the tiles
             scaling: 1, // Scaling factor of the image
             tile_size: 25, // Size of the tiles
             remove_used: true, // Remove used tile
@@ -44,11 +44,11 @@ mod tests {
     #[test]
     #[cfg(target_arch = "aarch64")]
     fn test_aarch64() {
-        let chemin_image = "assets/moseiik_test_images/kit.jpeg";
+        let chemin_image = "assets/kit.jpeg";
         let arg_test = Options {
             image: String::from(chemin_image), // Location of the target image
             output: String::from("assets/out_aarch64.png"), // Saved result location
-            tiles: String::from("assets/moseiik_test_images/images"), // Location of the tiles
+            tiles: String::from("assets/images"), // Location of the tiles
             scaling: 1, // Scaling factor of the image
             tile_size: 25, // Size of the tiles
             remove_used: true, // Remove used tile
@@ -69,11 +69,11 @@ mod tests {
 
     #[test]
     fn test_generic() {
-        let chemin_image = "assets/moseiik_test_images/kit.jpeg";
+        let chemin_image = "assets/kit.jpeg";
         let arg_test = Options {
             image: String::from(chemin_image),
-            output: String::from("assets/moseiik_test_images/out_generic.png"),
-            tiles: String::from("assets/moseiik_test_images/images"),
+            output: String::from("assets/out_generic.png"),
+            tiles: String::from("assets/images"),
             scaling: 1,
             tile_size: 25,
             remove_used: true,

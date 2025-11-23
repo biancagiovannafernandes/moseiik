@@ -17,7 +17,7 @@ mod tests {
          //test avx2 or sse2 if available
 
         use moseiik::main::compute_mosaic;
-        let chemin_image = "assets/kit.jpeg";
+        let chemin_image = "assets/moseiik_test_images/kit.jpeg";
         let arg_test = Options {
             image: String::from(chemin_image), // Location of the target image
             output: String::from("assets/out_x86.png"), // Saved result location
@@ -44,7 +44,7 @@ mod tests {
     #[test]
     #[cfg(target_arch = "aarch64")]
     fn test_aarch64() {
-        let chemin_image = "assets/kit.jpeg";
+        let chemin_image = "assets/moseiik_test_images/kit.jpeg";
         let arg_test = Options {
             image: String::from(chemin_image), // Location of the target image
             output: String::from("assets/out_aarch64.png"), // Saved result location
@@ -69,10 +69,10 @@ mod tests {
 
     #[test]
     fn test_generic() {
-        let chemin_image = "assets/kit.jpeg";
+        let chemin_image = "assets/moseiik_test_images/kit.jpeg";
         let arg_test = Options {
             image: String::from(chemin_image),
-            output: String::from("assets/out_generic.png"),
+            output: String::from("assets/moseiik_test_images/out_generic.png"),
             tiles: String::from("assets/moseiik_test_images/images"),
             scaling: 1,
             tile_size: 25,
@@ -81,7 +81,7 @@ mod tests {
             simd: false, // This time we disable SIMD to test generic implementation
             num_thread: 1,
         };
-    let _output_path = "assets/out_generic.png";
+    let _output_path = "assetsout_generic.png";
     compute_mosaic(arg_test);
     assert!(Path::new(_output_path).exists());
 

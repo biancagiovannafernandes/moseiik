@@ -81,7 +81,7 @@ mod tests {
             simd: false, // This time we disable SIMD to test generic implementation
             num_thread: 1,
         };
-    let _output_path = "assetsout_generic.png";
+    let _output_path = "assets/out_generic.png";
     compute_mosaic(arg_test);
     assert!(Path::new(_output_path).exists());
 

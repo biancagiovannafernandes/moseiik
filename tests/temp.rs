@@ -21,7 +21,7 @@ mod tests {
         let arg_test = Options {
             image: String::from(chemin_image), // Location of the target image
             output: String::from("assets/out_x86.png"), // Saved result location
-            tiles: String::from("assets/images"), // Location of the tiles
+            tiles: String::from("assets/moseiik_test_images/images"), // Location of the tiles
             scaling: 1, // Scaling factor of the image
             tile_size: 25, // Size of the tiles
             remove_used: true, // Remove used tile
@@ -48,7 +48,7 @@ mod tests {
         let arg_test = Options {
             image: String::from(chemin_image), // Location of the target image
             output: String::from("assets/out_aarch64.png"), // Saved result location
-            tiles: String::from("assets/images"), // Location of the tiles
+            tiles: String::from("assets/moseiik_test_images/images"), // Location of the tiles
             scaling: 1, // Scaling factor of the image
             tile_size: 25, // Size of the tiles
             remove_used: true, // Remove used tile
@@ -73,7 +73,7 @@ mod tests {
         let arg_test = Options {
             image: String::from(chemin_image),
             output: String::from("assets/out_generic.png"),
-            tiles: String::from("assets/images"),
+            tiles: String::from("assets/moseiik_test_images/images"),
             scaling: 1,
             tile_size: 25,
             remove_used: true,

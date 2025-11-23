@@ -441,73 +441,61 @@ fn main() {
 
 //main 
 
-#[cfg(test)]
-mod tests {
-    use super::*; //import des functions et structures du main file
-
     #[cfg(test)]
-    mod tests {
-        use image::imageops::tile;
+mod tests {
+    use image::imageops::tile;
     
     
-        use super::*; //import des functions et structures du main file
+    use super::*; //import des functions et structures du main file
     
-        #[test]
-        #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
-        fn unit_test_x86() { //pour lui tester il faut ecrire <cargo test x86> sur le terminal
-            let chemin_image = "assets/tiles-small/tile-1.png";
-            let tile_result: RgbImage = ImageReader::open(chemin_image).unwrap().decode().unwrap().into_rgb8();
-            let distance_l1_x86_sse2 = unsafe {l1_x86_sse2(&tile_result, &tile_result)};
-            print!("{}", distance_l1_x86_sse2);
-            assert_eq!(distance_l1_x86_sse2,0);
-        }
+    #[test]
+    #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+    fn unit_test_x86() { //pour lui tester il faut ecrire <cargo test x86> sur le terminal
+        let chemin_image = "assets/tiles-small/tile-1.png";
+        let tile_result: RgbImage = ImageReader::open(chemin_image).unwrap().decode().unwrap().into_rgb8();
+        let distance_l1_x86_sse2 = unsafe {l1_x86_sse2(&tile_result, &tile_result)};
+        print!("{}", distance_l1_x86_sse2);
+        assert_eq!(distance_l1_x86_sse2,0);
+    }
 
 
 
-        // POUR TESTER L1_NEON IL FAUT SIMULER UNE ARCHI AARCH64 SUR UN PC X86_64 AVEC QEMU OU AUTRE
-        #[test]
-        #[cfg(target_arch = "aarch64")]
-        fn unit_test_aarch64() {
-            let chemin_image = "assets/tiles-small/tile-1.png";
-            let tile_result: RgbImage = ImageReader::open(chemin_image).unwrap().decode().unwrap().into_rgb8();
-            let distance_l1_neon = unsafe {l1_x86_sse2(&tile_result, &tile_result)};
-            print!("{}", distance_l1_neon);
-            assert_eq!(distance_l1_x86_sse2,0);
-        }
-        }
-    
-        #[test]
-        fn unit_test_generic() {
-                
-        }
-
-
+    // POUR TESTER L1_NEON IL FAUT SIMULER UNE ARCHI AARCH64 SUR UN PC X86_64 AVEC QEMU OU AUTRE
+    #[test]
+    #[cfg(target_arch = "aarch64")]
+    fn unit_test_aarch64() {
+        let chemin_image = "assets/tiles-small/tile-1.png";
+        let tile_result: RgbImage = ImageReader::open(chemin_image).unwrap().decode().unwrap().into_rgb8();
+        let distance_l1_neon = unsafe {l1_x86_sse2(&tile_result, &tile_result)};
+        print!("{}", distance_l1_neon);
+        assert_eq!(distance_l1_x86_sse2,0);
+    }
         
-        #[test]
-        fn unit_test_prepare_target() {
-            let chemin_image = "assets/target-small.png";
-            let scale = 2;
-            let tile_size = Size {
-                width: 5,
-                height: 5,
-            };
-            let original_image = ImageReader::open(chemin_image)
-            .unwrap()
-            .decode()
-            .unwrap()
-            .into_rgb8();
-                    
-            let processed_target =  prepare_target(chemin_image, scale, &tile_size).expect("Couldn't process the image");
-                    
-            
-            // see if the processed image has the dimension of: original dimension * scale modulated by tile_size
-            let good_width =  original_image.width() * scale - (original_image.width()*scale % tile_size.width) ; // original width 125 * 0.2 = 25
-            let good_height = original_image.height() * scale - (original_image.height()*scale % tile_size.height); // original height 125 * 0.2 = 25
+        
+    #[test]
+    fn unit_test_prepare_target() {
+        let chemin_image = "assets/target-small.png";
+        let scale = 2;
+        let tile_size = Size {
+            width: 5,
+            height: 5,
+        };
+        let original_image = ImageReader::open(chemin_image)
+        .unwrap()
+        .decode()
+        .unwrap()
+        .into_rgb8();
+                
+        let processed_target =  prepare_target(chemin_image, scale, &tile_size).expect("Couldn't process the image");
+                
+        
+        // see if the processed image has the dimension of: original dimension * scale modulated by tile_size
+        let good_width =  original_image.width() * scale - (original_image.width()*scale % tile_size.width) ; // original width 125 * 0.2 = 25
+        let good_height = original_image.height() * scale - (original_image.height()*scale % tile_size.height); // original height 125 * 0.2 = 25
 
-
-            assert_eq!(processed_target.width(), good_width);
-            assert_eq!(processed_target.height(), good_height);
-            }
+        assert_eq!(processed_target.width(), good_width, "Widths are not equal");
+        assert_eq!(processed_target.height(), good_height, "Heights are not equal");
+    }
         
 
     #[test]
@@ -516,14 +504,14 @@ mod tests {
         let tile_size = Size { width: 5, height: 5 };
 
         let tiles = prepare_tiles(images_folder, &tile_size, false)
-            .expect("prepare_tiles failed");
+            .expect("The test prepare_tiles failed");
 
         let expected = count_available_tiles(images_folder) as usize;
         assert_eq!(tiles.len(), expected, "number of tiles mismatch");
 
         for (i, tile) in tiles.iter().enumerate() {
-            assert_eq!(tile.width(),tile_size.width);            
-            assert_eq!(tile.height(),tile_size.height);
+            assert_eq!(tile.width(),tile_size.width,"Tile {} width mismatch", i);            
+            assert_eq!(tile.height(),tile_size.height,"Tile {} height mismatch", i);
         }
     }
 }

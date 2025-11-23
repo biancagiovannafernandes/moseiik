@@ -31,7 +31,7 @@ mod tests {
         };
         let _output_path = "assets/out_x86.png";
         compute_mosaic(arg_test);
-        assert!(Path::new(_output_path).exists()); //check if anything was created in my output_path
+        assert!(Path::new(_output_path).exists(), "Output image was not created"); //check if anything was created in my output_path
 
         let _good_image: RgbImage = ImageReader::open("assets/ground-truth-kit.png").unwrap().decode().unwrap().into_rgb8();
         let _test_image: RgbImage = ImageReader::open(_output_path).unwrap().decode().unwrap().into_rgb8();
@@ -46,19 +46,19 @@ mod tests {
     fn test_aarch64() {
         let chemin_image = "assets/kit.jpeg";
         let arg_test = Options {
-            image: String::from(chemin_image), // Location of the target image
-            output: String::from("assets/out_aarch64.png"), // Saved result location
-            tiles: String::from("assets/images"), // Location of the tiles
-            scaling: 1, // Scaling factor of the image
-            tile_size: 25, // Size of the tiles
-            remove_used: true, // Remove used tile
+            image: String::from(chemin_image), 
+            output: String::from("assets/out_aarch64.png"),
+            tiles: String::from("assets/images"), 
+            scaling: 1, 
+            tile_size: 25, 
+            remove_used: true, 
             verbose: true,
-            simd: true, // Use SIMD when available
-            num_thread: 1, // Specify number of threads to use, leave blank for default
+            simd: true, 
+            num_thread: 1, 
         };
         let _output_path = "assets/out_aarch64.png";
         compute_mosaic(arg_test);
-        assert!(Path::new(_output_path).exists()); //check if anything was created in my output_path
+        assert!(Path::new(_output_path).exists(), "Output image was not created"); 
         
         let _good_image: RgbImage = ImageReader::open("assets/ground-truth-kit.png").unwrap().decode().unwrap().into_rgb8();
         let _test_image: RgbImage = ImageReader::open(_output_path).unwrap().decode().unwrap().into_rgb8();
@@ -83,7 +83,7 @@ mod tests {
         };
     let _output_path = "assets/out_generic.png";
     compute_mosaic(arg_test);
-    assert!(Path::new(_output_path).exists());
+    assert!(Path::new(_output_path).exists(), "Output image was not created");
 
     let _good_image: RgbImage = ImageReader::open("assets/ground-truth-kit.png").unwrap().decode().unwrap().into_rgb8();
     let _test_image: RgbImage = ImageReader::open(_output_path).unwrap().decode().unwrap().into_rgb8();

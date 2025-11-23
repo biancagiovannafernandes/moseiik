@@ -1,0 +1,35 @@
+name: CI Moseiik
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm64]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx   #BuildX is different, it can build a multi-architecture docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/${{ matrix.arch }}
+          tags: moseiik-ci:${{ matrix.arch }}
+          load: true
+
+      - name: Run tests inside container
+        run: docker run --rm moseiik-ci:${{ matrix.arch }}

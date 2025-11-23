@@ -287,7 +287,7 @@ fn l1(im1: &RgbImage, im2: &RgbImage, simd_flag: bool, verbose: bool) -> i32 {
 }
 
 unsafe fn get_optimal_l1(simd_flag: bool, verbose: bool) -> unsafe fn(&RgbImage, &RgbImage) -> i32 {
-    static mut FN_POINTER: unsafe fn(&RgbImage, &RgbImage) -> i32 = l1_generic;
+    static mut FN_POINTER: unsafe fn(&RgbImage, &RgbImage) -> i32 = l1_generic; // if there is no SIMD parameter we will call l1_generic
 
     static INIT: std::sync::Once = std::sync::Once::new();
 
@@ -384,7 +384,7 @@ pub fn compute_mosaic(args: Options) {
     let now = Instant::now();
     let pool = ThreadPool::new(args.num_thread);
     scope_with(&pool, |scope| {
-        for w in 0..target_size.width / tile_size.width {
+        for w in 0..target_size.width / tile_size.width { //to the division of the target image in pieces of tile_size width
             let target = Arc::clone(&target);
             scope.execute(move || {
                 for h in 0..target_size.height / tile_size.height {
@@ -436,26 +436,94 @@ pub fn compute_mosaic(args: Options) {
 fn main() {
     let args = Options::parse();
     compute_mosaic(args);
+
 }
+
+//main 
 
 #[cfg(test)]
 mod tests {
-    #[test]
-    #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
-    fn unit_test_x86() {
-        // TODO
-        assert!(true);
-    }
+    use super::*; //import des functions et structures du main file
+
+    #[cfg(test)]
+    mod tests {
+        use image::imageops::tile;
+    
+    
+        use super::*; //import des functions et structures du main file
+    
+        #[test]
+        #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+        fn unit_test_x86() { //pour lui tester il faut ecrire <cargo test x86> sur le terminal
+            let chemin_image = "assets/tiles-small/tile-1.png";
+            let tile_result: RgbImage = ImageReader::open(chemin_image).unwrap().decode().unwrap().into_rgb8();
+            let distance_l1_x86_sse2 = unsafe {l1_x86_sse2(&tile_result, &tile_result)};
+            print!("{}", distance_l1_x86_sse2);
+            assert_eq!(distance_l1_x86_sse2,0);
+        }
+
+
+
+        // POUR TESTER L1_NEON IL FAUT SIMULER UNE ARCHI AARCH64 SUR UN PC X86_64 AVEC QEMU OU AUTRE
+        #[test]
+        #[cfg(target_arch = "aarch64")]
+        fn unit_test_aarch64() {
+            let chemin_image = "assets/tiles-small/tile-1.png";
+            let tile_result: RgbImage = ImageReader::open(chemin_image).unwrap().decode().unwrap().into_rgb8();
+            let distance_l1_neon = unsafe {l1_x86_sse2(&tile_result, &tile_result)};
+            print!("{}", distance_l1_neon);
+            assert_eq!(distance_l1_x86_sse2,0);
+        }
+        }
+    
+        #[test]
+        fn unit_test_generic() {
+                
+        }
+
+
+        
+        #[test]
+        fn unit_test_prepare_target() {
+            let chemin_image = "assets/target-small.png";
+            let scale = 2;
+            let tile_size = Size {
+                width: 5,
+                height: 5,
+            };
+            let original_image = ImageReader::open(chemin_image)
+            .unwrap()
+            .decode()
+            .unwrap()
+            .into_rgb8();
+                    
+            let processed_target =  prepare_target(chemin_image, scale, &tile_size).expect("Couldn't process the image");
+                    
+            
+            // see if the processed image has the dimension of: original dimension * scale modulated by tile_size
+            let good_width =  original_image.width() * scale - (original_image.width()*scale % tile_size.width) ; // original width 125 * 0.2 = 25
+            let good_height = original_image.height() * scale - (original_image.height()*scale % tile_size.height); // original height 125 * 0.2 = 25
+
+
+            assert_eq!(processed_target.width(), good_width);
+            assert_eq!(processed_target.height(), good_height);
+            }
+        
 
     #[test]
-    #[cfg(target_arch = "aarch64")]
-    fn unit_test_aarch64() {
-        assert!(true);
-    }
+    fn unit_test_prepare_tiles() {
+        let images_folder = "assets/tiles-small";
+        let tile_size = Size { width: 5, height: 5 };
 
-    #[test]
-    fn unit_test_generic() {
-        // TODO
-        assert!(true);
+        let tiles = prepare_tiles(images_folder, &tile_size, false)
+            .expect("prepare_tiles failed");
+
+        let expected = count_available_tiles(images_folder) as usize;
+        assert_eq!(tiles.len(), expected, "number of tiles mismatch");
+
+        for (i, tile) in tiles.iter().enumerate() {
+            assert_eq!(tile.width(),tile_size.width);            
+            assert_eq!(tile.height(),tile_size.height);
+        }
     }
 }

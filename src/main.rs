@@ -468,7 +468,7 @@ mod tests {
         let tile_result: RgbImage = ImageReader::open(chemin_image).unwrap().decode().unwrap().into_rgb8();
         let distance_l1_neon = unsafe {l1_neon(&tile_result, &tile_result)};
         print!("{}", distance_l1_neon);
-        assert_eq!(distance_l1_x86_sse2,0);
+        assert_eq!(distance_l1_neon,0);
     }
         
         

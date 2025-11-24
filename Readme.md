@@ -1,6 +1,6 @@
 #  Moseiik
 
-Moseiik est un projet qui permet de générer des mosaïques d'images à partir d'un corpus de vignettes (appelées tiles) et d'une image de référence (appelée target). Le projet inclut des optimisations **SIMD** (SSE2 pour x86 et NEON pour ARM) pour le calcul de la distance L1 entre les couleurs, ainsi que la parallélisation via multithreading.
+Moseiik est un projet qui permet de générer des mosaïques d'images à partir d'un corpus de vignettes (appelées tiles) et d'une image de référence (appelée target). Le projet inclut des optimisations **SIMD** (SSE2 pour x86 et NEON pour ARM) pour le calcul de la distance L1, ainsi que la parallélisation via multithreading.
 
 Ce projet est préparé en 3 parties : implémentation des tests unitaires et d'intégration, Docker et Intégration Continue (CI).
 

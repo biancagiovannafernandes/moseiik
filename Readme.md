@@ -8,18 +8,19 @@ Ce projet est préparé en 3 parties : implémentation des tests unitaires et d'
 
 | Fonction | Logique de Test Résumée |
 | :--- | :--- |
-| **`l1_generic`** | Vérifie le calcul correct de la distance L1 (somme des différences absolues) pour des cas simples. |
-| **`l1_x86_sse2`** | Contrôle que la version optimisée **SSE2** (x86) produit un résultat **identique** à la fonction `l1_generic`. |
-| **`l1_neon`** | Contrôle que la version optimisée **NEON** (ARM) produit un résultat **identique** à la fonction `l1_generic`. |
-| **`prepare_tiles`** | Vérifie que le chargement et le redimensionnement sont corrects : **nombre** de vignettes attendu et **dimensions** conformes à `--tile-size`. |
-| **`prepare_target`** | Vérifie que la cible est correctement redimensionnée et/ou rognée : les **dimensions finales** doivent être des multiples de `tile-size`. |
+| **`unit_test_generic`** | Vérifie le calcul correct de la distance L1. Pour ce faire, nous avons chargé une image simple, tile_0, et on a comparé la distance avec elle-même. Étant donné qu'il s'agit de la même image, la distance doit être nulle, et nous utilisons donc cette condition comme critère de succès pour le test. |
+| **`unit_test_x86`** | S'assurer que la fonction **SSE2** (x86) produit un résultat **identique** à la fonction `l1_generic`. |
+| **`unit_test_aarch64`** | S'assurer que la fonction **NEON** (ARM) produit un résultat **identique** à la fonction `l1_generic`. |
+| **`unit_test_prepare_tiles`** | Vérifie que le chargement et le redimensionnement sont corrects : **nombre** de vignettes attendu et **dimensions** et `--tile-size`. |
+| **`unit_test_prepare_target`** | Vérifie que "target" est correctement redimensionnée : les **dimensions finales** doivent être des multiples de `tile-size`. |
 
 ### Tests d'Intégration (`tests/`)
 
 | Test | Logique de Test Résumée |
 | :--- | :--- |
-| **`compute_mosaic`** (Intégration Fonctionnelle) | Exécute la fonction principale `compute_mosaic` et compare l'image générée (`out.png`) à une image de **vérité terrain** (`assets/ground-truth-kit.png`), garantissant un résultat **identique** pour un cas de référence. |
-| **End-to-end multi-architecture** | Assure que le pipeline complet s'exécute avec succès sur les architectures **amd64** et **arm64**, et que les résultats restent **cohérents** entre ces plateformes. |
+| **`test_generic`** (Intégration Fonctionnelle) | Exécute la fonction principale `compute_mosaic` et compare l'image générée (`out.png`) à une image de **vérité terrain** (`assets/ground-truth-kit.png`), pour une architecture generique. |
+| **`test_x86`** (Intégration Fonctionnelle) | Exécute la fonction principale `compute_mosaic` et compare l'image générée (`out.png`) à une image de **vérité terrain** (`assets/ground-truth-kit.png`), pour l'architecture x86. |
+| **`test_aarch64`** (Intégration Fonctionnelle) | Exécute la fonction principale `compute_mosaic` et compare l'image générée (`out.png`) à une image de **vérité terrain** (`assets/ground-truth-kit.png`), pour l'architecture ARM64. |
 
 -----
 

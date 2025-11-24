@@ -444,10 +444,17 @@ fn main() {
     #[cfg(test)]
 mod tests {
     use image::imageops::tile;
-    
-    
     use super::*; //import des functions et structures du main file
     
+    #[test]
+    #[cfg(any(target_arch = "x86", target_arch = "x86_64", target_arch = "aarch64"))]
+    fn unit_test_generic() { 
+        let chemin_image = "assets/tiles-small/tile-1.png";
+        let tile_result: RgbImage = ImageReader::open(chemin_image).unwrap().decode().unwrap().into_rgb8();
+        let distance_l1_generic = l1_generic(&tile_result, &tile_result);
+        assert_eq!(distance_l1_generic,0);
+    }
+
     #[test]
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     fn unit_test_x86() { //pour lui tester il faut ecrire <cargo test x86> sur le terminal
